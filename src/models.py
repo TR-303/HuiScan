@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from .extensions import db
 
 
 class HSBatch(db.Model):
@@ -28,7 +27,7 @@ class HSImage(db.Model):
     width = db.Column(db.Integer, nullable=True)
 
     # 外键，关联到 batch 表
-    batch_id = db.Column(db.Integer, db.ForeignKey('HSBatch.batch_id'), nullable=False)
+    batch_id = db.Column(db.Integer, db.ForeignKey('hs_batch.batch_id'), nullable=False)
 
     # 关系：一张图片可以包含多个缺陷（Defect）
     defects = db.relationship('HSDefect', backref='image', lazy='dynamic')
@@ -44,7 +43,7 @@ class HSDefect(db.Model):
     confidence = db.Column(db.Float, nullable=True)
 
     # 外键，关联到 image 表
-    image_id = db.Column(db.Integer, db.ForeignKey('HSImage.image_id'), nullable=False)
+    image_id = db.Column(db.Integer, db.ForeignKey('hs_image.image_id'), nullable=False)
 
 
 class HSReport(db.Model):

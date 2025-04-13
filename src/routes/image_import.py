@@ -3,7 +3,8 @@ import os
 from datetime import datetime
 from flask import Blueprint, current_app, request, jsonify
 
-from src.models import HSBatch, db, HSImage
+from src.models import HSBatch, HSImage
+from src.extensions import db
 
 import_bp = Blueprint('image', __name__)
 
