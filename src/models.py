@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 from .extensions import db
 
 
@@ -11,8 +10,13 @@ class HSBatch(db.Model):
     # 关系：一个 batch 可以包含多个 image
     images = db.relationship('HSImage', backref='batch', lazy='dynamic')
 
-    def batch_detect(self):
-        pass
+    def get_batch_size(self):
+        return self.images.count()
+
+    def get_batch_status(self):
+        if self.images.filter_by(image_processed_path=None).count() > 0:
+            return "uncompleted"
+        return "completed"
 
 
 class HSImage(db.Model):
@@ -54,9 +58,3 @@ class HSReport(db.Model):
     start_time = db.Column(db.DateTime, nullable=True)
     end_time = db.Column(db.DateTime, nullable=True)
     report_file_path = db.Column(db.String(255), nullable=True)
-
-    def create_report(self):
-        """
-        根据业务逻辑生成报告
-        """
-        pass
