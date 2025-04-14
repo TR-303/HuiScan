@@ -1,5 +1,8 @@
+import hashlib
 import os
 from datetime import timedelta, datetime
+
+from PIL import UnidentifiedImageError, Image
 from dateutil.parser import parse
 from flask import Blueprint, request, jsonify, url_for
 
