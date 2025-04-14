@@ -156,6 +156,8 @@ def get_batch_detail():
     result = {
         'batchId': batch.batch_id,
         'importTime': batch.import_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'size': batch.get_batch_size(),
+        'status': '已完成' if batch.get_batch_status() == 'finished' else '未完成',
         'images': [
             {
                 'imageId': image.image_id,
