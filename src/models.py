@@ -14,9 +14,10 @@ class HSBatch(db.Model):
         return self.images.count()
 
     def get_batch_status(self):
-        if self.images.filter_by(image_processed_path=None).count() > 0:
-            return "uncompleted"
-        return "completed"
+        if self.images.filter(HSImage.detect_time.is_(None)).count() > 0:
+            return 'unfinished'
+        else:
+            return 'finished'
 
 
 class HSImage(db.Model):
@@ -27,8 +28,8 @@ class HSImage(db.Model):
     image_processed_path = db.Column(db.String(255), nullable=True)
     detect_time = db.Column(db.DateTime, nullable=True)
     create_time = db.Column(db.DateTime, default=db.func.now(), nullable=False)
-    height = db.Column(db.Integer, nullable=True)
     width = db.Column(db.Integer, nullable=True)
+    height = db.Column(db.Integer, nullable=True)
 
     # 外键，关联到 batch 表
     batch_id = db.Column(db.Integer, db.ForeignKey('hs_batch.batch_id'), nullable=False)

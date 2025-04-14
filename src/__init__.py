@@ -6,7 +6,7 @@ from .models import *
 
 
 def create_app(config_class=Config):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder=config_class.STATIC_FOLDER, static_url_path=config_class.STATIC_URL_PATH)
     app.config.from_object(config_class)
 
     # 初始化扩展
@@ -14,15 +14,11 @@ def create_app(config_class=Config):
     CORS(app)
 
     # 注册蓝图
-    from .routes.image_import import import_bp
-    from .routes.defect_recognition import defect_bp
-    from .routes.data_query import query_bp
-    from .routes.data_inspect import inspect_bp
+    from src.routes.image_controller import image_bp
+    from src.routes.batch_controller import batch_bp
 
-    app.register_blueprint(import_bp, url_prefix='/api/import')
-    app.register_blueprint(defect_bp, url_prefix='/api/detect')
-    app.register_blueprint(query_bp, url_prefix='/api/query')
-    app.register_blueprint(inspect_bp, url_prefix='/api/inspect')
+    app.register_blueprint(image_bp, url_prefix='/api/image')
+    app.register_blueprint(batch_bp, url_prefix='/api/batch')
 
     # 初始化数据库
     with app.app_context():
