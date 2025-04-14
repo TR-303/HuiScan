@@ -20,7 +20,7 @@ def get_image_detail():
         'original': None if image.image_original_path is None else url_for('static',
                                                                            filename=f"{image.create_time.strftime('%Y-%m-%d')}/{image.image_original_path}"),
         'processed': None if image.image_processed_path is None else url_for('static',
-                                                                             filename=f"{image.create_time.strftime('%Y-%m-%d')}/{image.image_processed_path}"),
+                                                                             filename=f"{image.detect_time.strftime('%Y-%m-%d')}/{image.image_processed_path}"),
         'createTime': image.create_time.strftime('%Y-%m-%d %H:%M:%S'),
         'detectTime': image.detect_time.strftime('%Y-%m-%d %H:%M:%S') if image.detect_time else None,
         'width': image.width,

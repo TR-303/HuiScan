@@ -1,8 +1,39 @@
-from flask import Blueprint, request, Response, stream_with_context, json
+from flask import Blueprint, request, Response, stream_with_context, json, jsonify, url_for
 from src.models import HSBatch, HSImage
 from src.detect_utils import detect
 
 detect_bp = Blueprint('detect', __name__)
+
+
+@detect_bp.route('/single-detect', methods=['POST'])
+def single_detect():
+    image_id = request.args.get('imageId')
+    if not image_id:
+        return {"error": "imageId is required"}, 400
+
+    # 查询图片
+    image = HSImage.query.filter_by(image_id=image_id).first()
+    if not image:
+        return {"error": "Image not found"}, 404
+
+    # 检测图片
+    has_defect = detect(image.image_id)
+
+    return jsonify({
+        'hasDefect': has_defect,
+        'imageId': image.image_id,
+        'detectTime': image.detect_time,
+        'processed': None if image.image_processed_path is None else url_for('static',
+                             filename=f"{image.detect_time.strftime('%Y-%m-%d')}/{image.image_processed_path}"),
+        'defects':[
+            {
+                'defectId': defect.defect_id,
+                'defectType': defect.defect_type,
+                'bbox': defect.bbox,
+                'confidence': defect.confidence
+            } for defect in image.defects
+        ]
+    }), 200
 
 
 @detect_bp.route('/batch-detect', methods=['POST'])
