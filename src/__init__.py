@@ -16,9 +16,11 @@ def create_app(config_class=Config):
     # 注册蓝图
     from src.routes.image_controller import image_bp
     from src.routes.batch_controller import batch_bp
+    from src.routes.detect_controller import detect_bp
 
     app.register_blueprint(image_bp, url_prefix='/api/image')
     app.register_blueprint(batch_bp, url_prefix='/api/batch')
+    app.register_blueprint(detect_bp, url_prefix='/api/detect')
 
     # 初始化数据库
     with app.app_context():

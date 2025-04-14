@@ -1,7 +1,6 @@
 import hashlib
 import os
 from datetime import timedelta, datetime
-
 from PIL import UnidentifiedImageError, Image
 from dateutil.parser import parse
 from flask import Blueprint, request, jsonify, url_for
@@ -161,6 +160,7 @@ def get_batch_detail():
         'images': [
             {
                 'imageId': image.image_id,
+                'status': 'untouched' if image.detect_time is None else ('faulty' if image.defects.count() > 0 else 'flawless'),
                 'thumbnail': url_for('static',
                                      filename=f"{image.create_time.strftime('%Y-%m-%d')}/{os.path.splitext(image.image_original_path)[0]}_thumbnail{os.path.splitext(image.image_original_path)[1]}")
             }
