@@ -7,8 +7,8 @@ __pycache__/
 .vscode/
 
 # Ignore data files
-instance/
+instance/app.db
 *.spqlite
 
-# Ignore model
-models/
+# Ignore models
+models/*
