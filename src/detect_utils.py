@@ -7,7 +7,7 @@ from datetime import datetime
 import cv2
 import numpy as np
 
-from flask import current_app, Flask
+from flask import current_app
 from ultralytics import YOLO
 
 from src.extensions import db
@@ -32,7 +32,6 @@ def detection_worker():
     while True:
         task_id, image_path = task_queue.get()
         result = model.predict(source=image_path, conf=0.5)
-        # mock
         results[task_id] = result
         events[task_id].set()
         task_queue.task_done()
