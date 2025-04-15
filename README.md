@@ -1,21 +1,25 @@
-启动服务器前，安装依赖，并在根目录运行
+# 项目运行说明
+运行
 ```bash
-set FLASK_APP=run.py
-flask init-db
+conda create -n HuiScan python=3.12
+```
+创建3.12版本的python环境，并使用
+```bash
+pip install -r requirements.txt
+```
+安装依赖
+服务器启动前，在根目录运行
+```bash
+flask --app run.py init-db
 ```
 创建数据库表
+最后用
+```bash
+python run.py
+```
+启动开发服务器
 
 若要清空数据库，可以使用
 ```bash
-set FLASK_APP=run.py
-flask reset-db
+flask --app run.py reset-db
 ```
-
-目前可能导致报错：
-
-$env:FLASK_APP = "run.py"
-
-ModuleNotFoundError: No module named 'flask_sqlalchemy'
-
-instance folder create
-
