@@ -15,6 +15,13 @@ from src.models import HSImage, HSDefect
 from src.config import get_upload_folder
 
 MODEL_PATH = './models/seg_n.pt'
+DEFECT_NAMES = ['夹杂物', '补丁', '划痕', '其他缺陷']
+colors = [
+    (255, 0, 0),  # 蓝
+    (0, 255, 0),  # 绿
+    (0, 255, 255),  # 黄
+    (0, 0, 255)  # 红
+]
 
 task_queue = queue.Queue()
 results = {}
@@ -25,7 +32,7 @@ model = None
 def init_yolo_model():
     global model
     if model is None:
-        model = YOLO(MODEL_PATH)
+        model = YOLO(MODEL_PATH,task='segment')
 
 
 def detection_worker():
@@ -65,11 +72,24 @@ def detect(image_id):
 
     img = cv2.imread(str(image_path))
     if masks is not None:
-        for mask in masks:
+        for i,mask in enumerate(masks):
+            class_id = int(classes[i].item())  # 转换为整数索引
+            color = colors[class_id]
+
+            # 处理mask数组
             mask_arr = (mask.cpu().numpy() * 255).astype(np.uint8)
+            mask_arr = cv2.resize(mask_arr, (img.shape[1], img.shape[0]))
+
+            # 创建彩色遮罩
             colored_mask = np.zeros_like(img, dtype=np.uint8)
-            colored_mask[:, :, 1] = mask_arr
-            img = cv2.addWeighted(img, 1, colored_mask, 0.5, 0)
+
+            # 将颜色应用到三个通道（BGR顺序）
+            colored_mask[:, :, 0] = color[0] * (mask_arr > 0)  # 蓝色通道
+            colored_mask[:, :, 1] = color[1] * (mask_arr > 0)  # 绿色通道
+            colored_mask[:, :, 2] = color[2] * (mask_arr > 0)  # 红色通道
+
+            # 叠加到原图
+            img = cv2.addWeighted(img, 1, colored_mask, 0.35, 0)
 
     time_now = datetime.now()
 
@@ -81,7 +101,7 @@ def detect(image_id):
     with current_app.app_context():
         for i in range(len(boxes)):
             x1, y1, x2, y2 = boxes[i].tolist()
-            defect_type = str(int(classes[i].item()))
+            defect_type = DEFECT_NAMES[int(classes[i].item())]
             confidence = float(scores[i].item())
             defect = HSDefect(
                 defect_type=defect_type,
