@@ -12,6 +12,8 @@ class Config:
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'bmp', 'gif'}
     STATIC_FOLDER = os.path.join(BASE_DIR, 'instance/uploads')
     STATIC_URL_PATH = '/static'
+    MAX_CONTENT_LENGTH = 10 * 1024 * 1024
+
 
 def get_allowed_extensions():
     return current_app.config['ALLOWED_EXTENSIONS']
@@ -19,3 +21,7 @@ def get_allowed_extensions():
 
 def get_upload_folder():
     return current_app.config['UPLOAD_FOLDER']
+
+
+def get_max_content_length():
+    return current_app.config['MAX_CONTENT_LENGTH']

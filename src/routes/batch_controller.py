@@ -6,7 +6,7 @@ from dateutil.parser import parse
 from flask import Blueprint, request, jsonify, url_for
 
 from src.extensions import db
-from src.config import get_upload_folder, get_allowed_extensions
+from src.config import get_upload_folder, get_allowed_extensions, get_max_content_length
 from src.models import HSBatch, HSImage
 
 batch_bp = Blueprint('batch', __name__)
@@ -18,6 +18,9 @@ def allowed_file(filename):
 
 @batch_bp.route('/create-batch', methods=['POST'])
 def create_batch():
+    if request.content_length > get_max_content_length():
+        return jsonify({'error': '图片过多！'}), 413
+
     if 'images' not in request.files:
         return jsonify({'error': '没有上传图片！'}), 400
 
@@ -160,7 +163,8 @@ def get_batch_detail():
         'images': [
             {
                 'imageId': image.image_id,
-                'status': 'untouched' if image.detect_time is None else ('faulty' if image.defects.count() > 0 else 'flawless'),
+                'status': 'untouched' if image.detect_time is None else (
+                    'faulty' if image.defects.count() > 0 else 'flawless'),
                 'thumbnail': url_for('static',
                                      filename=f"{image.create_time.strftime('%Y-%m-%d')}/{os.path.splitext(image.image_original_path)[0]}_thumbnail{os.path.splitext(image.image_original_path)[1]}")
             }
