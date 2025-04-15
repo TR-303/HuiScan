@@ -7,7 +7,6 @@ from sqlalchemy import and_
 from datetime import datetime
 from collections import defaultdict
 
-
 image_bp = Blueprint('image', __name__)
 
 
@@ -49,7 +48,9 @@ def get_images():
     start_time = request.args.get('start_time')
     end_time = request.args.get('end_time')
     detected = request.args.get('detected')
-    defect_type = request.args.get('defect_type')
+    defect_type = request.args.get('defect_type').split(',') if request.args.get('defect_type') else []
+
+    print(defect_type)
 
     query = HSImage.query
 
@@ -64,7 +65,7 @@ def get_images():
     results = []
     for img in query.all():
         defect_types = list({d.defect_type for d in img.defects})
-        if defect_type and defect_type not in defect_types:
+        if defect_type and not any(dt in defect_types for dt in defect_type):
             continue
         results.append({
             'image_id': img.image_id,
@@ -75,6 +76,7 @@ def get_images():
         })
 
     return jsonify(results), 200
+
 
 @image_bp.route('/get-image-statistics', methods=['GET'])
 def get_statistics():
