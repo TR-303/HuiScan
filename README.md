@@ -10,3 +10,12 @@ flask init-db
 set FLASK_APP=run.py
 flask reset-db
 ```
+
+目前可能导致报错：
+
+$env:FLASK_APP = "run.py"
+
+ModuleNotFoundError: No module named 'flask_sqlalchemy'
+
+instance folder create
+
