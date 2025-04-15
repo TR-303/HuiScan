@@ -15,7 +15,7 @@ from src.models import HSImage, HSDefect
 from src.config import get_upload_folder
 
 MODEL_PATH = './models/seg_n.pt'
-DEFECT_NAMES = ['夹杂物', '补丁', '划痕', '其他缺陷']
+DEFECT_NAMES = ['边缘裂纹', '横向裂纹', '表面杂质', '斑块缺陷']
 colors = [
     (255, 0, 0),  # 蓝
     (0, 255, 0),  # 绿
@@ -38,7 +38,7 @@ def init_yolo_model():
 def detection_worker():
     while True:
         task_id, image_path = task_queue.get()
-        result = model.predict(source=image_path, conf=0.5)
+        result = model.predict(source=image_path, conf=0.4)
         results[task_id] = result
         events[task_id].set()
         task_queue.task_done()
