@@ -1,4 +1,6 @@
 from flask import Blueprint, request, Response, stream_with_context, json, jsonify, url_for
+
+from src.extensions import db
 from src.models import HSBatch, HSImage
 from src.detect_utils import detect
 
@@ -19,13 +21,15 @@ def single_detect():
     # 检测图片
     has_defect = detect(image.image_id)
 
-    return jsonify({
+    db.session.refresh(image)
+
+    ret = {
         'hasDefect': has_defect,
         'imageId': image.image_id,
         'detectTime': image.detect_time,
         'processed': None if image.image_processed_path is None else url_for('static',
-                             filename=f"{image.detect_time.strftime('%Y-%m-%d')}/{image.image_processed_path}"),
-        'defects':[
+                                                                             filename=f"{image.detect_time.strftime('%Y-%m-%d')}/{image.image_processed_path}"),
+        'defects': [
             {
                 'defectId': defect.defect_id,
                 'defectType': defect.defect_type,
@@ -33,7 +37,10 @@ def single_detect():
                 'confidence': defect.confidence
             } for defect in image.defects
         ]
-    }), 200
+    }
+
+    print(ret)
+    return jsonify(ret), 200
 
 
 @detect_bp.route('/batch-detect', methods=['POST'])
