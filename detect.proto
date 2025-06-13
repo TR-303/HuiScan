@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package detect;
+
+service Detector {
+  // Performs detection on a given image path
+  rpc Detect(DetectRequest) returns (DetectResponse);
+}
+
+message DetectRequest {
+  bytes image_data = 1;
+}
+
+message DetectResult {
+  repeated float box = 1;       // [x1, y1, x2, y2]
+  float confidence = 2;         // confidence score
+  int32 class_id = 3;           // defect class index
+}
+
+message DetectResponse {
+  repeated DetectResult results = 1;
+  bytes processed_image = 2;    // image bytes of the processed image
+}
