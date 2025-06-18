@@ -6,8 +6,8 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 
-import src.grpc.detect_pb2 as detect_pb2
-import src.grpc.detect_pb2_grpc as detect_pb2_grpc
+import detect_pb2 as detect_pb2
+import detect_pb2_grpc as detect_pb2_grpc
 
 # Path to the YOLO model
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "./models/seg_n.pt")
