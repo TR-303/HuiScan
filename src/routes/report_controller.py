@@ -110,7 +110,7 @@ def create_report():
         c.drawString(50, 700, "二、典型缺陷展示")
 
         # 定义缺陷类型及顺序
-        defect_types = ["表面杂质", "斑块缺陷", "横线裂纹", "边缘裂纹"]
+        defect_types = ["表面杂质", "斑块缺陷", "横向裂纹", "边缘裂纹"]
         y_position = 650  # 初始 y 坐标
 
         for defect_type in defect_types:
